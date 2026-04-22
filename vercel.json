@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/india-market-intel.html" }
+  ],
+  "functions": {
+    "api/*.py": { "runtime": "python3.12" }
+  }
+}

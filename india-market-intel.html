@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>India Market Intel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #f2f2f7;
+  --surface:   #ffffff;
+  --surface-2: #f9f9fb;
+  --fill:      rgba(120,120,128,.10);
+  --fill-2:    rgba(120,120,128,.06);
+  --sep:       rgba(60,60,67,.13);
+  --sep-hard:  #c6c6c8;
+
+  --label-1: #1c1c1e;
+  --label-2: rgba(60,60,67,.55);
+  --label-3: rgba(60,60,67,.32);
+  --label-4: rgba(60,60,67,.18);
+
+  --blue:   #007aff;
+  --green:  #28a745;
+  --red:    #dc3545;
+  --orange: #e67e00;
+  --purple: #5856d6;
+
+  --r-xs: 6px;
+  --r-sm: 9px;
+  --r-md: 13px;
+  --r-lg: 18px;
+
+  --card-shadow:  0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --card-hover:   0 6px 20px rgba(0,0,0,.10), 0 2px 6px rgba(0,0,0,.06);
+  --header-shadow: 0 1px 0 var(--sep);
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--label-1);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c7c7cc; border-radius: 3px; }
+
+/* ━━ HEADER ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.header {
+  position: sticky; top: 0; z-index: 300;
+  height: 52px;
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 18px;
+  background: rgba(242,242,247,.88);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  box-shadow: var(--header-shadow);
+}
+
+.logo {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 15px; font-weight: 700; letter-spacing: -.4px;
+  color: var(--label-1); text-decoration: none; flex-shrink: 0;
+}
+.logo-icon {
+  width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+  background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-icon svg { width: 15px; height: 15px; fill: white; }
+
+/* Search */
+.search-wrap { flex: 1; max-width: 380px; position: relative; }
+.search-icon {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  color: var(--label-3); pointer-events: none; display: flex;
+}
+.search-icon svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+#search-input {
+  width: 100%; height: 30px; padding: 0 30px 0 30px;
+  background: var(--fill); border: 1px solid transparent;
+  border-radius: 20px; font-family: inherit; font-size: 13px;
+  color: var(--label-1); outline: none;
+  transition: all .18s;
+}
+#search-input::placeholder { color: var(--label-3); }
+#search-input:focus {
+  background: var(--surface);
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(0,122,255,.13);
+}
+.search-clear {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #aeaeb2; border: none; cursor: pointer; padding: 0;
+  display: none; align-items: center; justify-content: center;
+  transition: opacity .12s;
+}
+.search-clear:hover { opacity: .7; }
+.search-clear svg { width: 8px; height: 8px; stroke: white; fill: none; stroke-width: 2.5; stroke-linecap: round; }
+.search-clear.vis { display: flex; }
+
+.hdr-right { margin-left: auto; display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+.hdr-time { font-size: 11px; color: var(--label-3); white-space: nowrap; }
+
+/* Server status — subtle, not alarming */
+.srv-status {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 500; color: var(--label-3);
+}
+.srv-dot { width: 6px; height: 6px; border-radius: 50%; background: #c7c7cc; }
+.srv-dot.online  { background: var(--green); }
+.srv-dot.offline { background: #c7c7cc; animation: blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  height: 30px; padding: 0 13px; border-radius: var(--r-sm);
+  border: none; cursor: pointer; font-family: inherit;
+  font-size: 13px; font-weight: 500; letter-spacing: -.1px;
+  transition: opacity .15s, transform .1s; white-space: nowrap;
+}
+.btn:hover  { opacity: .78; }
+.btn:active { transform: scale(.97); opacity: 1; }
+.btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+.btn-primary { background: var(--blue); color: white; }
+.btn-ghost   { background: var(--surface); color: var(--label-2); border: 1px solid var(--sep-hard); }
+
+/* ━━ FILTER BAR ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.filter-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 18px;
+  background: rgba(255,255,255,.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--sep);
+  position: sticky; top: 52px; z-index: 200;
+}
+
+/* Segmented control — exact macOS */
+.seg {
+  display: inline-flex;
+  background: rgba(118,118,128,.12);
+  border-radius: 9px; padding: 2px; gap: 1px;
+}
+.seg-btn {
+  height: 26px; padding: 0 12px;
+  border-radius: 7px; border: none; cursor: pointer;
+  font-family: inherit; font-size: 12px; font-weight: 500;
+  color: var(--label-2); background: transparent;
+  transition: all .14s; white-space: nowrap;
+}
+.seg-btn.active {
+  background: var(--surface);
+  color: var(--label-1);
+  box-shadow: 0 1px 4px rgba(0,0,0,.14), 0 .5px 1.5px rgba(0,0,0,.10);
+}
+
+.impact-select {
+  margin-left: auto; appearance: none;
+  height: 28px; padding: 0 24px 0 10px;
+  background: var(--surface); border: 1px solid var(--sep-hard);
+  border-radius: var(--r-sm); font-family: inherit;
+  font-size: 12px; font-weight: 500; color: var(--label-2); cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(60,60,67,.4)'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 8px center;
+}
+.impact-select:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,122,255,.12); }
+
+/* ━━ STATUS BAR ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.status-bar {
+  padding: 5px 18px;
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--label-3);
+  background: var(--bg); border-bottom: 1px solid var(--sep);
+}
+.sb-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--blue); flex-shrink: 0; }
+.sb-dot.done  { background: var(--green); }
+.sb-dot.error { background: var(--red); }
+.sb-dot.spin  { animation: blink .9s infinite; }
+
+/* ━━ LAYOUT ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.layout { display: grid; grid-template-columns: 1fr 276px; min-height: calc(100vh - 108px); }
+
+/* ━━ FEED ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.feed { padding: 18px 18px 48px; overflow-y: auto; }
+
+.cat-block { margin-bottom: 26px; }
+
+.cat-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 9px;
+}
+.cat-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .07em;
+  text-transform: uppercase; color: var(--label-3); white-space: nowrap;
+}
+.cat-pill {
+  font-size: 10px; font-weight: 600;
+  padding: 1px 7px; border-radius: 20px;
+  background: var(--fill); color: var(--label-3);
+}
+.cat-line { flex: 1; height: 1px; background: var(--sep); }
+
+/* ━━ CARD ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--sep);
+  border-left: none;
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  padding: 13px 14px 12px 14px;
+  margin-bottom: 7px;
+  display: flex; gap: 0;
+  box-shadow: var(--card-shadow);
+  overflow: hidden; position: relative;
+  transition: box-shadow .2s, transform .15s;
+  cursor: default;
+}
+.card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: var(--accent-color, #c7c7cc);
+  border-radius: 4px 0 0 4px;
+}
+.card:hover {
+  box-shadow: var(--card-hover);
+  transform: translateY(-1px);
+}
+
+.card-body { min-width: 0; flex: 1; padding-left: 2px; }
+
+.card-headline {
+  font-size: 14px; font-weight: 600; line-height: 1.42;
+  color: var(--label-1); margin-bottom: 5px;
+  letter-spacing: -.1px;
+}
+.card-headline a { color: inherit; text-decoration: none; }
+.card-headline a:hover { color: var(--blue); }
+
+.card-summary {
+  font-size: 12.5px; font-weight: 400; line-height: 1.55;
+  color: var(--label-2); margin-bottom: 10px;
+}
+
+.card-foot {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+}
+
+/* Signal badge — larger, cleaner */
+.sig {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600; letter-spacing: .02em;
+  padding: 3px 9px 3px 7px; border-radius: var(--r-xs);
+}
+.sig-icon { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.sig-bull { background: rgba(40,167,69,.12);  color: #1a7332; }
+.sig-bear { background: rgba(220,53,69,.10);  color: #a71d2a; }
+.sig-neut { background: rgba(230,126,0,.10);  color: #945200; }
+
+/* Sector tag */
+.sector-tag {
+  font-size: 11px; font-weight: 500;
+  padding: 2px 8px; border-radius: var(--r-xs);
+  background: var(--fill); color: var(--label-2);
+  border: 1px solid var(--sep);
+}
+
+/* Source + time */
+.card-meta { font-size: 11px; color: var(--label-3); margin-left: auto; white-space: nowrap; }
+
+/* Impact — text label instead of tiny orbs */
+.impact-badge {
+  font-size: 10px; font-weight: 600; letter-spacing: .02em;
+  padding: 2px 7px; border-radius: 20px;
+  background: var(--fill-2); color: var(--label-3);
+  border: 1px solid var(--sep); white-space: nowrap;
+}
+.impact-5 { background: rgba(220,53,69,.08);  color: #a71d2a; border-color: rgba(220,53,69,.18); }
+.impact-4 { background: rgba(230,126,0,.08);  color: #945200; border-color: rgba(230,126,0,.18); }
+.impact-3 { background: rgba(0,122,255,.08);  color: #0055b3; border-color: rgba(0,122,255,.18); }
+
+/* ━━ EMPTY STATE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.empty {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 80px 24px; gap: 10px; text-align: center;
+}
+.empty-icon  { font-size: 36px; opacity: .2; }
+.empty-title { font-size: 16px; font-weight: 600; }
+.empty-sub   { font-size: 13px; color: var(--label-3); line-height: 1.55; max-width: 260px; }
+
+/* ━━ SIDEBAR ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.sidebar {
+  border-left: 1px solid var(--sep);
+  padding: 18px 14px 48px;
+  background: var(--bg); overflow-y: auto;
+}
+
+.widget { margin-bottom: 22px; }
+.wlabel {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .07em; color: var(--label-3); margin-bottom: 10px;
+}
+
+/* Signal cards */
+.sig-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+.sig-card {
+  background: var(--surface);
+  border: 1px solid var(--sep);
+  border-radius: var(--r-sm);
+  padding: 11px 8px; text-align: center;
+  box-shadow: var(--card-shadow);
+}
+.sig-num {
+  font-size: 28px; font-weight: 800; line-height: 1;
+  letter-spacing: -1.5px; font-variant-numeric: tabular-nums;
+  margin-bottom: 3px;
+}
+.sig-lbl { font-size: 10px; font-weight: 500; color: var(--label-3); }
+
+/* Source rows */
+.src-row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 6px 0; border-bottom: 1px solid var(--sep);
+  font-size: 12px;
+}
+.src-row:last-child { border-bottom: none; }
+.src-name { color: var(--label-2); }
+.src-ok   { color: #1a7332; font-size: 11px; font-weight: 500; }
+.src-fail { color: #a71d2a; font-size: 11px; font-weight: 500; }
+.src-wait { color: var(--label-4); font-size: 11px; }
+
+/* Digest */
+.digest-box {
+  background: var(--surface);
+  border: 1px solid var(--sep);
+  border-radius: var(--r-sm);
+  padding: 11px; font-size: 12px; font-weight: 400;
+  color: var(--label-2); line-height: 1.65;
+  white-space: pre-wrap; max-height: 220px; overflow-y: auto;
+  box-shadow: var(--card-shadow);
+}
+
+/* ━━ SPINNER ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.spin {
+  display: inline-block; width: 12px; height: 12px;
+  border: 2px solid rgba(255,255,255,.2); border-top-color: rgba(255,255,255,.8);
+  border-radius: 50%; animation: rot .65s linear infinite;
+}
+@keyframes rot { to { transform: rotate(360deg); } }
+
+mark {
+  background: rgba(0,122,255,.13); color: inherit;
+  border-radius: 2px; padding: 0 1px;
+}
+
+@media (max-width: 780px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { border-left: none; border-top: 1px solid var(--sep); }
+  .search-wrap { max-width: 200px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <a class="logo" href="#">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+    </div>
+    IndiaMarketIntel
+  </a>
+
+  <div class="search-wrap">
+    <div class="search-icon">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+    </div>
+    <input id="search-input" type="search" placeholder="Search articles…" oninput="onSearch(this.value)" autocomplete="off" spellcheck="false">
+    <button class="search-clear" id="search-clear" onclick="clearSearch()" tabindex="-1">
+      <svg viewBox="0 0 10 10"><line x1="1" y1="1" x2="9" y2="9"/><line x1="9" y1="1" x2="1" y2="9"/></svg>
+    </button>
+  </div>
+
+  <div class="hdr-right">
+    <span class="hdr-time" id="last-updated"></span>
+    <div class="srv-status">
+      <div class="srv-dot offline" id="srv-dot"></div>
+      <span id="srv-lbl">Connecting</span>
+    </div>
+    <button class="btn btn-ghost" id="digest-btn" style="display:none" onclick="generateDigest()">Digest</button>
+    <button class="btn btn-primary" id="fetch-btn" onclick="fetchNews()">
+      <span id="fetch-lbl">Fetch news</span>
+    </button>
+  </div>
+</header>
+
+<!-- Filter bar -->
+<div class="filter-bar">
+  <div class="seg" id="seg">
+    <button class="seg-btn active" data-cat="all"         onclick="setFilter(this)">All</button>
+    <button class="seg-btn"        data-cat="macro_india" onclick="setFilter(this)">Macro India</button>
+    <button class="seg-btn"        data-cat="global"      onclick="setFilter(this)">Global</button>
+    <button class="seg-btn"        data-cat="sector"      onclick="setFilter(this)">Sector</button>
+    <button class="seg-btn"        data-cat="corporate"   onclick="setFilter(this)">Corporate</button>
+  </div>
+  <select class="impact-select" id="impact-filter" onchange="applyFilters()">
+    <option value="1">All impact</option>
+    <option value="3">High impact (3+)</option>
+    <option value="4">Critical (4+)</option>
+    <option value="5">Market-moving (5)</option>
+  </select>
+</div>
+
+<!-- Status bar -->
+<div class="status-bar">
+  <div class="sb-dot done" id="sb-dot"></div>
+  <span id="sb-text">Ready — click "Fetch news" to load</span>
+</div>
+
+<!-- Main -->
+<div class="layout">
+  <main class="feed" id="feed">
+    <div class="empty">
+      <div class="empty-icon">📊</div>
+      <div class="empty-title">No news loaded</div>
+      <div class="empty-sub">Click "Fetch news" to pull the latest Indian market intelligence.</div>
+    </div>
+  </main>
+
+  <aside class="sidebar">
+    <div class="widget">
+      <div class="wlabel">Signal Summary</div>
+      <div class="sig-grid">
+        <div class="sig-card">
+          <div class="sig-num" id="bull-n" style="color:#1a7332">—</div>
+          <div class="sig-lbl">Bullish</div>
+        </div>
+        <div class="sig-card">
+          <div class="sig-num" id="bear-n" style="color:#a71d2a">—</div>
+          <div class="sig-lbl">Bearish</div>
+        </div>
+        <div class="sig-card">
+          <div class="sig-num" id="neut-n" style="color:#945200">—</div>
+          <div class="sig-lbl">Neutral</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="widget">
+      <div class="wlabel">Data Sources</div>
+      <div id="src-list">
+        <div class="src-row"><span class="src-name">NewsAPI</span>            <span class="src-wait" id="src-newsapi">—</span></div>
+        <div class="src-row"><span class="src-name">NDTV Profit</span>        <span class="src-wait" id="src-ndtv">—</span></div>
+        <div class="src-row"><span class="src-name">Google News: Markets</span>  <span class="src-wait" id="src-gn1">—</span></div>
+        <div class="src-row"><span class="src-name">Google News: Earnings</span> <span class="src-wait" id="src-gn2">—</span></div>
+        <div class="src-row"><span class="src-name">Google News: Macro</span>    <span class="src-wait" id="src-gn3">—</span></div>
+        <div class="src-row"><span class="src-name">Google News: Trading</span>  <span class="src-wait" id="src-gn4">—</span></div>
+        <div class="src-row"><span class="src-name">LiveMint</span>          <span class="src-wait" id="src-mint">—</span></div>
+        <div class="src-row"><span class="src-name">BusinessLine</span>      <span class="src-wait" id="src-bl">—</span></div>
+      </div>
+    </div>
+
+    <div class="widget" id="digest-widget" style="display:none">
+      <div class="wlabel">Daily Digest</div>
+      <div class="digest-box" id="digest-txt"></div>
+    </div>
+  </aside>
+</div>
+
+<script>
+const API_BASE = (location.hostname==='localhost'||location.hostname==='127.0.0.1')
+  ? 'http://localhost:7432' : '';
+
+let all = [], activeCat = 'all', searchQ = '';
+
+// ── Server ────────────────────────────────────────────────────────────────
+async function pingServer() {
+  try {
+    const r = await fetch(`${API_BASE}/api/news`, { method:'HEAD', signal:AbortSignal.timeout(2500) });
+    setSrv(r.ok);
+  } catch { setSrv(false); }
+}
+function setSrv(ok) {
+  document.getElementById('srv-dot').className = 'srv-dot ' + (ok ? 'online' : 'offline');
+  document.getElementById('srv-lbl').textContent = ok ? 'Live' : 'Offline';
+}
+
+// ── Source map ────────────────────────────────────────────────────────────
+const SRC_ID = {
+  'NewsAPI':               'newsapi',
+  'NDTV Profit':           'ndtv',
+  'Google News: Markets':  'gn1',
+  'Google News: Earnings': 'gn2',
+  'Google News: Macro':    'gn3',
+  'Google News: Trading':  'gn4',
+  'LiveMint':              'mint',
+  'BusinessLine':          'bl',
+};
+
+// ── Fetch ─────────────────────────────────────────────────────────────────
+async function fetchNews() {
+  const btn = document.getElementById('fetch-btn');
+  const lbl = document.getElementById('fetch-lbl');
+  btn.disabled = true; lbl.innerHTML = '<span class="spin"></span>';
+  setStatus('spin', 'Fetching from all sources…');
+  resetSources();
+
+  let raw;
+  try {
+    const r = await fetch(`${API_BASE}/api/news`);
+    if (!r.ok) throw new Error(`Server ${r.status}`);
+    raw = await r.json();
+  } catch(e) {
+    setStatus('error', `Cannot reach server: ${e.message}`);
+    btn.disabled=false; lbl.textContent='Fetch news'; return;
+  }
+
+  updateSources(raw.sources);
+  const arts = raw.articles;
+  setStatus('spin', `${arts.length} articles fetched — analysing with Claude…`);
+
+  if (!arts.length) {
+    setStatus('error', 'No articles fetched.');
+    btn.disabled=false; lbl.textContent='Fetch news'; return;
+  }
+
+  let scored;
+  try { scored = await analyse(arts); }
+  catch(e) {
+    setStatus('error', `Claude: ${e.message}`);
+    btn.disabled=false; lbl.textContent='Fetch news'; return;
+  }
+
+  all = scored.map(item => {
+    const o = arts[item.id-1]||{};
+    return {...item, title:o.title||'', url:o.url||'#', source:o.source||'', publishedAt:o.publishedAt||''};
+  }).sort((a,b) => b.impact-a.impact);
+
+  updateSignals(); applyFilters();
+  document.getElementById('last-updated').textContent =
+    'Updated ' + new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('digest-btn').style.display='';
+  setStatus('done', `${all.length} articles scored and loaded`);
+  btn.disabled=false; lbl.textContent='Refresh';
+}
+
+// ── Claude ────────────────────────────────────────────────────────────────
+async function analyse(articles) {
+  const items = articles.slice(0,45).map((a,i) =>
+    `[${i+1}] ${a.title}${a.description?' — '+a.description.slice(0,100):''}`
+  ).join('\n');
+
+  const prompt = `You are a senior Indian equity market analyst. Analyse these ${Math.min(articles.length,45)} news items.
+For each relevant to Indian stock markets return a JSON array. Each object:
+- id: (bracket number)
+- summary: exactly 2 sentences — what happened, why it matters for Indian markets
+- signal: "bullish" | "bearish" | "neutral"
+- category: "macro_india" | "global" | "sector" | "corporate"
+- sectors: up to 3 from [Banking,IT,Pharma,FMCG,Metals,Energy,Auto,Infra,NBFCs,Realty,Telecom,All]
+- impact: 1–5 (5=market-moving, 4=high, 3=moderate, 2=low, 1=noise)
+
+Skip irrelevant items. Return ONLY a valid JSON array, no markdown.
+
+NEWS:
+${items}`;
+
+  const r = await fetch(`${API_BASE}/api/anthropic`, {
+    method:'POST',
+    headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01'},
+    body:JSON.stringify({model:'claude-haiku-4-5',max_tokens:4096,messages:[{role:'user',content:prompt}]}),
+  });
+  const d = await r.json();
+  if (d.error) throw new Error(d.error.message);
+  const txt = d.content[0].text.trim().replace(/^```json\n?|^```\n?|\n?```$/g,'').trim();
+  return JSON.parse(txt);
+}
+
+// ── Digest ────────────────────────────────────────────────────────────────
+async function generateDigest() {
+  const btn = document.getElementById('digest-btn');
+  btn.disabled=true; btn.textContent='Generating…';
+  const top = all.slice(0,12).map(a =>
+    `[${(a.signal||'neutral').toUpperCase()}][${a.impact}] ${a.title} — ${a.summary||''}`
+  ).join('\n');
+  try {
+    const r = await fetch(`${API_BASE}/api/anthropic`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:700,messages:[{role:'user',content:
+        `Write a concise daily market briefing for an Indian equity investor. 2–3 sentences of macro context, then 4–5 bullet points starting with •. Plain text only.\n\n${top}`
+      }]}),
+    });
+    const d = await r.json();
+    if (d.error) throw new Error(d.error.message);
+    document.getElementById('digest-widget').style.display='';
+    document.getElementById('digest-txt').textContent=d.content[0].text;
+  } catch(e) { alert('Digest failed: '+e.message); }
+  btn.disabled=false; btn.textContent='Digest';
+}
+
+// ── Search ────────────────────────────────────────────────────────────────
+function onSearch(v) {
+  searchQ = v.trim().toLowerCase();
+  document.getElementById('search-clear').classList.toggle('vis', v.length>0);
+  applyFilters();
+}
+function clearSearch() {
+  document.getElementById('search-input').value=''; onSearch('');
+}
+
+// ── Filters ───────────────────────────────────────────────────────────────
+function setFilter(el) {
+  document.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active'); activeCat=el.dataset.cat; applyFilters();
+}
+function applyFilters() {
+  const min = parseInt(document.getElementById('impact-filter').value)||1;
+  const vis = all.filter(a => {
+    if (activeCat!=='all' && a.category!==activeCat) return false;
+    if (a.impact < min) return false;
+    if (searchQ) {
+      const hay = ((a.title||'')+' '+(a.summary||'')+' '+(a.sectors||[]).join(' ')).toLowerCase();
+      if (!hay.includes(searchQ)) return false;
+    }
+    return true;
+  });
+  renderFeed(vis);
+}
+
+// ── Render ────────────────────────────────────────────────────────────────
+const ACCENT_COLOR = {
+  5: '#dc3545',
+  4: '#e67e00',
+  3: '#007aff',
+  2: '#5856d6',
+  1: '#c7c7cc',
+};
+const IMPACT_LABEL = { 5:'Critical', 4:'High', 3:'Moderate', 2:'Low', 1:'Low' };
+const CAT_TITLE = { macro_india:'Macro India', global:'Global Macro', sector:'Sector', corporate:'Corporate' };
+
+function renderFeed(articles) {
+  const feed = document.getElementById('feed');
+  if (!articles.length) {
+    const msg = searchQ
+      ? `No results for "<strong>${e(searchQ)}</strong>"`
+      : 'No articles match the current filters.';
+    feed.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">No results</div><div class="empty-sub">${msg}</div></div>`;
+    return;
+  }
+
+  const groups = {};
+  articles.forEach(a => { (groups[a.category]??=[]).push(a); });
+
+  let html = '';
+  ['macro_india','global','sector','corporate'].forEach(cat => {
+    if (!groups[cat]) return;
+    html += `<div class="cat-block">
+      <div class="cat-row">
+        <span class="cat-label">${CAT_TITLE[cat]||cat}</span>
+        <span class="cat-pill">${groups[cat].length}</span>
+        <div class="cat-line"></div>
+      </div>`;
+
+    groups[cat].forEach(a => {
+      const accent   = ACCENT_COLOR[a.impact] || '#c7c7cc';
+      const sigCls   = a.signal==='bullish'?'sig-bull':a.signal==='bearish'?'sig-bear':'sig-neut';
+      const sigTxt   = (a.signal||'neutral')[0].toUpperCase()+(a.signal||'neutral').slice(1);
+      const sectors  = (a.sectors||[]).slice(0,3).map(s=>`<span class="sector-tag">${e(s)}</span>`).join('');
+      const impCls   = a.impact>=5?'impact-5':a.impact>=4?'impact-4':a.impact>=3?'impact-3':'';
+      const impTxt   = (IMPACT_LABEL[a.impact]||'Low') + ' · ' + a.impact + '/5';
+      const time     = fmtDate(a.publishedAt);
+      const titleH   = searchQ ? highlight(e(a.title),   searchQ) : e(a.title);
+      const summaryH = searchQ ? highlight(e(a.summary||''), searchQ) : e(a.summary||'');
+
+      html += `
+      <div class="card" style="--accent-color:${accent}">
+        <div class="card-body">
+          <div class="card-headline"><a href="${e(a.url)}" target="_blank" rel="noopener">${titleH}</a></div>
+          <div class="card-summary">${summaryH}</div>
+          <div class="card-foot">
+            <span class="sig ${sigCls}"><span class="sig-icon"></span>${sigTxt}</span>
+            ${sectors}
+            <span class="impact-badge ${impCls}">${impTxt}</span>
+            <span class="card-meta">${e(a.source)} · ${time}</span>
+          </div>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  feed.innerHTML = html;
+}
+
+function updateSignals() {
+  document.getElementById('bull-n').textContent = all.filter(a=>a.signal==='bullish').length;
+  document.getElementById('bear-n').textContent = all.filter(a=>a.signal==='bearish').length;
+  document.getElementById('neut-n').textContent = all.filter(a=>a.signal==='neutral').length;
+}
+function updateSources(sources) {
+  Object.entries(sources).forEach(([name,{count,error}]) => {
+    const id = SRC_ID[name]; if (!id) return;
+    const el = document.getElementById('src-'+id); if (!el) return;
+    if (error) { el.className='src-fail'; el.textContent='✗ '+error.slice(0,30); }
+    else       { el.className='src-ok';   el.textContent='✓ '+count; }
+  });
+}
+function resetSources() {
+  Object.values(SRC_ID).forEach(id => {
+    const el = document.getElementById('src-'+id);
+    if (el) { el.className='src-wait'; el.textContent='—'; }
+  });
+}
+
+function setStatus(state, msg) {
+  document.getElementById('sb-text').textContent = msg;
+  document.getElementById('sb-dot').className =
+    'sb-dot'+(state==='done'?' done':state==='error'?' error':' spin');
+}
+function fmtDate(raw) {
+  if (!raw) return '';
+  try {
+    const OFF=5.5*3600000;
+    const di=new Date(new Date(raw).getTime()+OFF);
+    const ni=new Date(Date.now()+OFF);
+    const ds=di.toISOString().slice(0,10), ns=ni.toISOString().slice(0,10);
+    const ys=new Date(ni-86400000).toISOString().slice(0,10);
+    const hm=di.toISOString().slice(11,16);
+    if(ds===ns)  return 'Today '+hm;
+    if(ds===ys)  return 'Yesterday '+hm;
+    return di.toISOString().slice(5,10).replace('-','/')+' '+hm;
+  } catch { return ''; }
+}
+function highlight(text, q) {
+  if (!q) return text;
+  return text.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<mark>$1</mark>');
+}
+function e(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+window.addEventListener('load', () => { pingServer(); setInterval(pingServer, 10000); });
+</script>
+</body>
+</html>
